@@ -1,0 +1,3 @@
+Ejecutar este comando al instalar de primera vez
+Formatea el código antes de subirlo a producción
+npx mrm lint-staged
