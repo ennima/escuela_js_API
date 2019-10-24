@@ -1,13 +1,16 @@
 const express = require('express');
-const { usersMock } = require('../utils/mocks/users');
+const UserService = require('../services/users');
 
 function usersApi(app) {
   const router = express.Router();
+  const userService = new UserService();
+
   app.use('/api/users', router);
 
   router.get('/', async function(req, res, next) {
+    const { tags } = req.query;
     try {
-      const users = await Promise.resolve(usersMock);
+      const users = await userService.getUsers({ tags });
 
       res.set('X-Powered-By', 'yo mero');
       res.status(200).json({
@@ -20,8 +23,9 @@ function usersApi(app) {
   });
 
   router.get('/:userId', async function(req, res, next) {
+    const { userId } = req.params;
     try {
-      const users = await Promise.resolve(usersMock[0]);
+      const users = await userService.getUser({ userId });
 
       res.set('X-Powered-By', 'yo mero');
       res.status(200).json({
@@ -34,8 +38,10 @@ function usersApi(app) {
   });
 
   router.post('/', async function(req, res, next) {
+    const { body: user } = req;
+
     try {
-      const createdUserId = await Promise.resolve(usersMock[0].id);
+      const createdUserId = await userService.createUser({ user });
 
       res.set('X-Powered-By', 'yo mero');
       res.status(201).json({
@@ -48,8 +54,11 @@ function usersApi(app) {
   });
 
   router.put('/:userId', async function(req, res, next) {
+    const { body: user } = req;
+    const { userId } = req.params;
+
     try {
-      const updateUserId = await Promise.resolve(usersMock[0].id);
+      const updateUserId = await userService.updateUser({ userId, user });
 
       res.set('X-Powered-By', 'yo mero');
       res.status(200).json({
@@ -62,8 +71,9 @@ function usersApi(app) {
   });
 
   router.delete('/:userId', async function(req, res, next) {
+    const { userId } = req.params;
     try {
-      const deletedUserId = await Promise.resolve(usersMock[0].id);
+      const deletedUserId = await userService.deleteUser({ userId });
 
       res.set('X-Powered-By', 'yo mero');
       res.status(200).json({
